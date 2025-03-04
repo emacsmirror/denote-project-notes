@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: Copyright (C) 2025 Samuel W. Flint <swflint@samuelwflint
 SPDX-License-Identifier: GFDL-1.3-or-later
 -->
 
-# Denote Journal Capture [![Not Yet on MELPA](https://melpa.org/packages/denote-project-notes-badge.svg)](https://melpa.org/#/denote-project-notes) [![REUSE status](https://api.reuse.software/badge/git.sr.ht/~swflint/denote-project-notes)](https://api.reuse.software/info/git.sr.ht/~swflint/denote-project-notes)
+# Denote Project Notes [![Not Yet on MELPA](https://melpa.org/packages/denote-project-notes-badge.svg)](https://melpa.org/#/denote-project-notes) [![REUSE status](https://api.reuse.software/badge/git.sr.ht/~swflint/denote-project-notes)](https://api.reuse.software/info/git.sr.ht/~swflint/denote-project-notes)
 
 This package provides some simple linkage between Denote notes and projects.
 It does so by providing two buffer/directory-local variables that can be set through a provided command (`denote-project-notes-set-identifier`).
