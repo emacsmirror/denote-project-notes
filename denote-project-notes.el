@@ -88,10 +88,7 @@ If nil, `display-buffer-alist' will be used.  Otherwise, this value
 should be a valid ACTION for `display-buffer', which see."
   :group 'denote-project-notes
   :type `(choice (const :tag  "Fall-back on display-buffer-alist" nil)
-                 (alist :key-type (choice :tag "Condition"
-                                          regexp
-                                          (function :tag "Matcher function"))
-                        :value-type ,display-buffer--action-custom-type))
+                 ,display-buffer--action-custom-type)
   :risky t)
 
 
