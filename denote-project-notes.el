@@ -74,7 +74,8 @@ If nil, no notes will be associated with the project."
 (defcustom denote-project-notes-denote-directory denote-directory
   "Location of Denote silo for project notes.
 
-This defaults to `denote-directory', but can be set otherwise."
+This defaults to the load-time value of the variable `denote-directory',
+but can be set otherwise."
   :group 'denote-project-notes
   :type 'directory
   :local t
