@@ -7,7 +7,7 @@
 ;; Homepage: https://git.sr.ht/~swflint/denote-project-notes
 ;; Version: 1.0.0
 ;; Keywords: convenience
-;; Package-Requires: ((emacs "25.1") (denote "3.0.0"))
+;; Package-Requires: ((emacs "28.1") (denote "3.0.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
