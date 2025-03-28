@@ -5,7 +5,7 @@
 ;; Author: Samuel W. Flint <swflint@samuelwflint.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/denote-project-notes
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "28.1") (denote "3.0.0"))
 
@@ -105,9 +105,11 @@ Prompt for DIRECTORY if the prefix argument is used."
           (filename (denote-file-prompt nil "Project notes file" nil))
           (identifier (denote-retrieve-filename-identifier filename)))
      (list identifier denote-directory)))
-  (let ((dir-locals-path (or (locate-dominating-file (buffer-file-name) dir-locals-file)
-                             (and (project-current)
-                                  (file-name-concat (project-root (project-current)) dir-locals-file)))))
+  (let ((dir-locals-path (or (and (project-current)
+                                  (file-name-concat (project-root (project-current)) dir-locals-file))
+                             (locate-dominating-file (or (buffer-file-name)
+                                                         default-directory)
+                                                     dir-locals-file))))
     (add-dir-local-variable nil 'denote-project-notes-identifier identifier dir-locals-path)
     (unless (string= (expand-file-name directory)
                      (expand-file-name denote-project-notes-denote-directory))
