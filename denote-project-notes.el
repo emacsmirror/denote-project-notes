@@ -5,7 +5,7 @@
 ;; Author: Samuel W. Flint <swflint@samuelwflint.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/denote-project-notes
-;; Version: 1.1.0
+;; Version: 1.2.0
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "28.1") (denote "3.0.0"))
 
@@ -28,8 +28,12 @@
 ;; projects.  It does so by providing two buffer/directory-local
 ;; variables that can be set through a provided command
 ;; (`denote-project-notes-set-identifier').  The notes can then be
-;; displayed using `denote-project-notes-show'.  It is recomended to
-;; bind one or both of these commands to a convenient key.
+;; displayed using `denote-project-notes-show'.  Additionally, a more
+;; user-friendly DWIM command, `denote-project-notes-dwim' is
+;; available: this will show project notes if the notes identifier is
+;; set, or ask you to set the identifier; additionally, you can force
+;; changing the notes with the prefix argument.  It is recomended to
+;; bind one of these commands to a convenient key.
 ;;
 ;; The primary variable to select notes is
 ;; `denote-project-notes-identifier', whish should be set to a Denote
@@ -134,6 +138,18 @@ The notes are displayed using `display-buffer', following
     (if denote-project-notes-display-action
         (display-buffer buffer denote-project-notes-display-action)
       (display-buffer buffer))))
+
+(defun denote-project-notes-dwim (arg)
+  "Show or set project notes.
+
+If one prefix ARG, force setting the project's Denote identifier.  If
+two prefix arguments are used, pass one to
+`denote-project-notes-set-identifier'."
+  (interactive "p")
+  (if (or (null denote-project-notes-identifier) (> arg 1))
+      (let ((current-prefix-arg (if (> 4 arg) '(4) nil)))
+        (call-interactively #'denote-project-notes-set-identifier))
+    (call-interactively #'denote-project-notes-show)))
 
 (provide 'denote-project-notes)
 ;;; denote-project-notes.el ends here
