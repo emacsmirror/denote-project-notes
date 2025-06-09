@@ -5,7 +5,7 @@
 ;; Author: Samuel W. Flint <swflint@samuelwflint.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/denote-project-notes
-;; Version: 1.2.0
+;; Version: 2.0.0
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "28.1") (denote "3.0.0"))
 
@@ -38,7 +38,10 @@
 ;; The primary variable to select notes is
 ;; `denote-project-notes-identifier', whish should be set to a Denote
 ;; identifier that can be found in
-;; `denote-project-notes-denote-directory' (a Denote silo).
+;; `denote-project-notes-denote-directory' (a Denote silo).  An
+;; additional option includes using a username-to-identifier alist
+;; (this must be set using `customize-dirlocals' or by editing the
+;; .dir-locals.el file manually).
 ;;
 ;; Display can be customized using either `display-buffer-alist' (the
 ;; default), or through `denote-project-notes-display-action' (a
@@ -68,12 +71,18 @@
 (defcustom denote-project-notes-identifier nil
   "Denote identifier for project notes.
 
-If nil, no notes will be associated with the project."
+If nil, no notes will be associated with the project.
+
+An Alist-derived form is avaliable as well, mapping from the value of
+the variable `user-login-name' to a Denote identifier."
   :group 'denote-project-notes
   :type '(choice (const :tag "No notes." nil)
-                 (string :tag "Denote Identifier"))
+                 (string :tag "Denote Identifier")
+                 (alist :tag "Username/Identifier mapping"
+                        :key-type (string :tag "Username")
+                        :value-type (string :tag "Denote Identifier")))
   :local t
-  :safe #'string-or-null-p)
+  :safe #'denote-project-notes--identifier-safe-p)
 
 (defcustom denote-project-notes-denote-directory denote-directory
   "Location of Denote silo for project notes.
@@ -94,6 +103,27 @@ should be a valid ACTION for `display-buffer', which see."
   :type `(choice (const :tag  "Fall-back on display-buffer-alist" nil)
                  ,display-buffer--action-custom-type)
   :risky t)
+
+
+;;; Utility Functions
+
+(defun denote-project-notes--get-identifier ()
+  "Get Denote Project Notes identifier."
+  (or (and (stringp denote-project-notes-identifier)
+           denote-project-notes-identifier)
+      (and (listp denote-project-notes-identifier)
+           (alist-get user-login-name denote-project-notes-identifier))))
+
+(defun denote-project-notes--identifier-safe-p (object)
+  "Determine if OBJECT is a safe identifier."
+  (or (null object)
+      (stringp object)
+      (and (listp object)
+           (reduce (lambda (a b) (and a b))
+                   (mapcar (lambda (cons) (and (consp cons)
+                                               (stringp (car cons))
+                                               (stringp (cdr cons))))
+                           object)))))
 
 
 ;;; User Interface
@@ -131,7 +161,7 @@ The notes are displayed using `display-buffer', following
 `denote-project-notes-display-action' (if non-nil)."
   (interactive)
   (when-let* ((denote-directory denote-project-notes-denote-directory)
-              (identifier denote-project-notes-identifier)
+              (identifier (denote-project-notes--get-identifier))
               (filename (car (denote-directory-files identifier)))
               (buffer (or (get-file-buffer filename)
                           (find-file-noselect filename))))
