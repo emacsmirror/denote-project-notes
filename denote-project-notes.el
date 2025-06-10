@@ -112,7 +112,7 @@ should be a valid ACTION for `display-buffer', which see."
   (or (and (stringp denote-project-notes-identifier)
            denote-project-notes-identifier)
       (and (listp denote-project-notes-identifier)
-           (alist-get user-login-name denote-project-notes-identifier))))
+           (alist-get user-login-name denote-project-notes-identifier nil nil #'string=))))
 
 (defun denote-project-notes--identifier-safe-p (object)
   "Determine if OBJECT is a safe identifier."
@@ -176,7 +176,7 @@ If one prefix ARG, force setting the project's Denote identifier.  If
 two prefix arguments are used, pass one to
 `denote-project-notes-set-identifier'."
   (interactive "p")
-  (if (or (null denote-project-notes-identifier) (> arg 1))
+  (if (or (null (denote-project-notes--get-identifier)) (> arg 1))
       (let ((current-prefix-arg (if (> 4 arg) '(4) nil)))
         (call-interactively #'denote-project-notes-set-identifier))
     (call-interactively #'denote-project-notes-show)))
