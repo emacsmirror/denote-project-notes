@@ -5,7 +5,7 @@
 ;; Author: Samuel W. Flint <swflint@samuelwflint.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/denote-project-notes
-;; Version: 2.0.0
+;; Version: 2.0.1
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "28.1") (denote "3.0.0"))
 
@@ -125,6 +125,17 @@ should be a valid ACTION for `display-buffer', which see."
                                                (stringp (cdr cons))))
                            object)))))
 
+(defun denote-project-notes--save-variable (variable value)
+  "Save VALUE for VARIABLE in dir-locals appropriately."
+  (if (< emacs-major-version 30)
+      (add-dir-local-variable nil variable value)
+    (let ((dir-locals-path (or (and (project-current)
+                                    (file-name-concat (project-root (project-current)) dir-locals-file))
+                               (locate-dominating-file (or (buffer-file-name)
+                                                           default-directory)
+                                                       dir-locals-file))))
+      (add-dir-local-variable nil variable value dir-locals-path))))
+
 
 ;;; User Interface
 
@@ -139,15 +150,10 @@ Prompt for DIRECTORY if the prefix argument is used."
           (filename (denote-file-prompt nil "Project notes file" nil))
           (identifier (denote-retrieve-filename-identifier filename)))
      (list identifier denote-directory)))
-  (let ((dir-locals-path (or (and (project-current)
-                                  (file-name-concat (project-root (project-current)) dir-locals-file))
-                             (locate-dominating-file (or (buffer-file-name)
-                                                         default-directory)
-                                                     dir-locals-file))))
-    (add-dir-local-variable nil 'denote-project-notes-identifier identifier dir-locals-path)
-    (unless (string= (expand-file-name directory)
-                     (expand-file-name denote-project-notes-denote-directory))
-      (add-dir-local-variable nil 'denote-project-notes-denote-directory directory dir-locals-path))))
+  (denote-project-notes--save-variable 'denote-project-notes-identifier identifier)
+  (unless (string= (expand-file-name directory)
+                   (expand-file-name denote-project-notes-denote-directory))
+    (denote-project-notes--save-variable 'denote-project-notes-denote-directory directory)))
 
 (defun denote-project-notes-show ()
   "Show the current project's notes.
