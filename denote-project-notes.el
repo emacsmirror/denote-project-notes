@@ -5,7 +5,7 @@
 ;; Author: Samuel W. Flint <swflint@samuelwflint.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/denote-project-notes
-;; Version: 2.0.1
+;; Version: 2.0.2
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "28.1") (denote "3.0.0"))
 
@@ -183,7 +183,7 @@ two prefix arguments are used, pass one to
 `denote-project-notes-set-identifier'."
   (interactive "p")
   (if (or (null (denote-project-notes--get-identifier)) (> arg 1))
-      (let ((current-prefix-arg (if (> 4 arg) '(4) nil)))
+      (let ((current-prefix-arg (if (>= arg 4) '(4) nil)))
         (call-interactively #'denote-project-notes-set-identifier))
     (call-interactively #'denote-project-notes-show)))
 
